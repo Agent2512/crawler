@@ -29,21 +29,11 @@ export type catListing = {
     kmText: string,
     km: number,
     fuel: string,
+    rangeText: string,
+    range: number,
     priceKM: number
     link: string
 }
-
-let config = {
-    fuel: 3,
-    pricefrom: 10000,
-    pricetype: "Retail",
-    rangefrom: 430,
-    sortby: "price",
-    sortorder: "asc",
-}
-
-
-
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse,) {
     const rootPage = `https://www.bilbasen.dk/brugt/bil?fuel=3&pricefrom=10000&pricetype=Retail&rangefrom=350&sortby=price&sortorder=asc`
@@ -106,11 +96,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse,
             kmText: string,
             km: number
             fuel: string
+            rangeText: string
+            range: number
         } = {
             year: "",
             kmText: "",
             km: 0,
-            fuel: ""
+            fuel: "",
+            rangeText: "",
+            range: 0
         }
 
         for (let i = 0; i < rawDetails.length; i++) {
@@ -129,6 +123,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse,
             const fuelTypes = ["Benzin", "Diesel", "El", "Hybrid", "Plug-in"]
             if (fuelTypes.includes(detailText)) {
                 details.fuel = detailText.toLowerCase()
+            }
+
+            if (detailText.includes("km rækkevidde")) {
+                details.rangeText = detailText
+                details.range = Number(detailText.replace(/\D/g, ""))
             }
 
         }
